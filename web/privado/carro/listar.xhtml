@@ -1,0 +1,144 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/templates/template.xhtml">
+        <ui:define name="titulo">
+            Manutenção de Carros
+        </ui:define>
+        <ui:define name="conteudo">        
+            <h:form id="formListagem" prependId="false">
+                <p:growl/>
+                <p:dataTable value="#{controleCarro.dao.listarTodos}" var="obj"
+                             emptyMessage="Nenhum registro encontrado">
+
+                    <f:facet name="header">
+                        <p:commandButton value="Novo"
+                                         action="#{controleCarro.novo()}"
+                                         update=":formEdicao"
+                                         process="@form"
+                                         oncomplete="PF('dlg').show();"/>
+
+                        <p:outputLabel value="Manutenção de Carros"/>
+                    </f:facet>
+
+                    <p:column headerText="renavan">
+                        <p:outputLabel value="#{obj.renavan}"/>
+                    </p:column>
+                    <p:column headerText="placa">
+                        <p:outputLabel value="#{obj.placa}"/>
+                    </p:column>    
+                    <p:column headerText="modelo">
+                        <p:outputLabel value="#{obj.modelo}"/>
+                    </p:column>
+                    <p:column headerText="ano">
+                        <p:outputLabel value="#{obj.ano}"/>
+                    </p:column>
+                    <p:column headerText="descricao">
+                        <p:outputLabel value="#{obj.descricao}"/>
+                    </p:column>
+                    <p:column headerText="multas">
+                        <p:outputLabel value="#{obj.multas}">
+                            <f:convertNumber pattern="R$ 0.00"/>
+                        </p:outputLabel>        
+                    </p:column>
+                    <p:column headerText="Da revenda?">
+                        <p:outputLabel value="#{obj.emposse}">
+                            <f:converter converterId="converterEmposse"/>
+                        </p:outputLabel>                    
+                    </p:column>                
+
+                    <p:column headerText="Ações">
+                        <p:commandButton icon="ui-icon-pencil"
+                                         action="#{controleCarro.editar(obj.renavan)}"
+                                         oncomplete="PF('dlg').show();"
+                                         update=":formEdicao"
+                                         process="@form"/>
+                        <p:commandButton icon="ui-icon-trash"
+                                         action="#{controleCarro.excluir(obj.renavan)}"
+                                         update="@form" process="@form"
+                                         onclick="if (!confirm('Confirma a exclusão do objeto?'))
+                                                     return false"/>    
+                    </p:column>
+
+                    <f:facet name="footer">
+                        <p:outputLabel value="Total de registros: #{controleCarro.dao.listarTodos.size()}"/>
+                    </f:facet>
+
+                </p:dataTable>
+            </h:form>
+        </ui:define>
+        <ui:define name="dialogos">
+            <p:dialog header="Edição" widgetVar="dlg" 
+                      resizable="false" modal="true" width="800" height="600">
+                <h:form id="formEdicao" prependId="false">
+                    <p:growl/>
+                    <center>    
+                        <p:panelGrid columns="4">
+
+                            <f:facet name="header">
+                                <p:outputLabel value="Edição de Carros"/>
+                            </f:facet>
+
+                            <p:outputLabel value="Renavan" for="txtrenavan"/>
+                            <p:inputMask id="txtrenavan" size="10"
+                                         mask="999999999" 
+                                         value="#{controleCarro.objeto.renavan}"/>
+
+                            <p:outputLabel value="Placa" for="txtplaca"/>
+                            <p:inputMask id="txtplaca" size="10"
+                                         mask="aaa-9999" 
+                                         value="#{controleCarro.objeto.placa}"/>
+
+                            <p:outputLabel value="Modelo" for="txtModelo"/>
+                            <p:inputText value="#{controleCarro.objeto.modelo}"
+                                         size="20" maxlength="20"
+                                         id="txtModelo"
+                                         placeholder="Obrigatório"/>
+
+                            <p:outputLabel value="Ano" for="txtAno"/>
+                            <p:inputMask value="#{controleCarro.objeto.ano}"
+                                         mask="9999"
+                                         size="4" maxlength="4"
+                                         id="txtAno" />
+
+                            <p:outputLabel value="Descrição" for="txtDescricao"/>
+                            <p:inputText value="#{controleCarro.objeto.descricao}"
+                                         size="50" maxlength="50"
+                                         id="txtDescricao" />
+
+                            <p:outputLabel value="Multas" for="txtMultas"/>
+                            <p:inputText value="#{controleCarro.objeto.multas}"
+                                         size="14" maxlength="14"
+                                         id="txtMultas" />
+
+                            <p:outputLabel value="Da revenda" for="btnEmposse"/>
+                            <p:selectBooleanButton value="#{controleCarro.objeto.emposse}" id="btnEmposse"
+                                                   onLabel="Sim" offLabel="Não" style="width: 60"/>                
+
+                            <f:facet name="footer">
+                                <div align="center">
+                                    <p:commandButton value="Cancelar"
+                                                     action="#{controleCarro.cancelar()}"
+                                                     ajax="false"
+                                                     immediate="true"/>
+                                    <p:commandButton value="Salvar"
+                                                     action="#{controleCarro.salvar()}"
+                                                     update=":formListagem :formEdicao"
+
+                                                     icon="ui-icon-disk"
+                                                     oncomplete="if (!args.validationFailed) {PF('dlg').hide();}"/>
+                                </div>
+                            </f:facet>
+
+                        </p:panelGrid>
+                    </center>
+                </h:form>
+            </p:dialog>
+
+        </ui:define>
+    </ui:composition>
+</html>

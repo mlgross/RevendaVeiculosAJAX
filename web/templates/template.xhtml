@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view encoding="ISO-8859-1" contentType="text/html">
+        <h:head>
+            <title><ui:insert name="titulo">Trabalho de Tópicos Avençados</ui:insert></title>
+            <h:outputStylesheet library="css" name="estilos.css"/>
+            <h:outputScript library="js" name="scripts.js"/>
+        </h:head> 
+        <p:layout fullPage="true">
+            <p:layoutUnit position="north" header="Sistema de Revendas" style="text-align: center">
+
+            </p:layoutUnit>
+            <p:layoutUnit position="west" header="Menu"
+                          resizable="true" collapsible="true" closable="true"
+                          size="170">
+                <h:form prependId="false">
+                    <p:menu>
+                        <p:submenu label="Cadastros">
+                            <p:menuitem action="#{controleCarro.listar()}"
+                                        value="Cadastro de Carros"
+                                        ajax="false"/>
+                            <p:menuitem action="#{controleCliente.listar()}"
+                                        value="Cadastro de Clientes"
+                                        ajax="false"/>
+                            <p:menuitem action="#{controleReparador.listar()}"
+                                        value="Cadastro de Reparadores"
+                                        ajax="false"/>
+                            <p:menuitem action="#{controleNegociador.listar()}"
+                                        value="Cadastro de Negociadores"
+                                        ajax="false"/>
+                            <p:menuitem action="#{controleServico.listar()}"
+                                        value="Cadastro de Servicos"
+                                        ajax="false"/>                            
+                            <p:menuitem action="#{controleCompra.listar()}"
+                                        value="Cadastro de Compras"
+                                        ajax="false"/>
+                            <p:menuitem action="#{controleVenda.listar()}"
+                                        value="Cadastro de Vendas"
+                                        ajax="false"/>                            
+                        </p:submenu>
+                    </p:menu>
+                </h:form>               
+            </p:layoutUnit>
+            <p:layoutUnit position="center">
+                <ui:insert name="conteudo">
+                    aqui vai o conteudo
+                </ui:insert>
+            </p:layoutUnit>
+            <ui:insert name="dialogos">
+
+            </ui:insert>
+            <p:layoutUnit position="south">
+                <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                    <f:facet name="start">  
+                        <p:graphicImage library="imagens" name="loading.gif" />  
+                    </f:facet>  
+                    <f:facet name="complete">  
+                        <h:outputText value="" />  
+                    </f:facet>  
+                </p:ajaxStatus>                  
+                <div align="center">IFSUL PASSO FUNDO</div>
+            </p:layoutUnit>
+        </p:layout>
+    </f:view>        
+</html>

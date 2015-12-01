@@ -1,0 +1,155 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/templates/template.xhtml">
+        <ui:define name="titulo">
+            Manutenção de Serviços
+        </ui:define>
+        <ui:define name="conteudo"> 
+
+
+
+            <h:form id="formListagem" prependId="false">
+                <p:growl/>
+                <p:dataTable value="#{controleServico.dao.listarTodos}" var="obj"
+                             emptyMessage="Nenhum registro encontrado">
+
+                    <f:facet name="header">
+                        <p:commandButton value="Novo"
+                                         action="#{controleServico.novo()}"
+                                         update=":formEdicao"
+                                         process="@form"
+                                         oncomplete="PF('dlg').show();"/>
+                        <p:outputLabel value="Manutenção de Serviços"/>
+                    </f:facet>
+
+                    <p:column headerText="Número">
+                        <p:outputLabel value="#{obj.numero}"/>
+                    </p:column>
+                    <p:column headerText="Custo">
+                        <p:outputLabel value="#{obj.custo}"/>
+                    </p:column>
+                    <p:column headerText="Insumos">
+                        <p:outputLabel value="#{obj.insumos}"/>
+                    </p:column>
+                    <p:column headerText="Descrição">
+                        <p:outputLabel value="#{obj.descricao}"/>
+                    </p:column>
+                    <p:column headerText="Duração">
+                        <p:outputLabel value="#{obj.duracao}"/>
+                    </p:column>
+                    <p:column headerText="Carro">
+                        <p:outputLabel value="#{obj.carro.placa}"/>
+                    </p:column>
+                    <p:column headerText="Reparador">
+                        <p:outputLabel value="#{obj.reparador.nome}"/>
+                    </p:column>
+
+                    <p:column headerText="Ações">
+                        <p:commandButton icon="ui-icon-pencil"
+                                         action="#{controleServico.editar(obj.numero)}"
+                                         oncomplete="PF('dlg').show();"
+                                         update=":formEdicao"
+                                         process="@form"/>
+                        <p:commandButton icon="ui-icon-trash"
+                                         action="#{controleServico.excluir(obj.numero)}"
+                                         update="@form" process="@form"
+                                         onclick="if (!confirm('Confirma a exclusão do objeto?'))
+                                                     return false"/>    
+                    </p:column>
+
+                    <f:facet name="footer">
+                        <p:outputLabel value="Total de registros: #{controleServico.dao.listarTodos.size()}"/>
+                    </f:facet>
+
+                </p:dataTable>
+            </h:form>
+
+
+
+        </ui:define>
+        <ui:define name="dialogos">
+            <p:dialog header="Edição" widgetVar="dlg" 
+                      resizable="false" modal="true" width="800" height="600">
+
+
+
+                <h:form id="formEdicao" prependId="false">
+                    <p:growl/>
+                    <p:panelGrid columns="4">
+
+                        <f:facet name="header">
+                            <p:outputLabel value="Edição de Serviços"/>
+                        </f:facet>
+
+                        <p:outputLabel value="Número" for="txtNumero"/>
+                        <p:inputText id="txtNumero" size="10" readonly="true" 
+                                     value="#{controleServico.objeto.numero}"/>
+
+                        <p:outputLabel value="Custo" for="txtCusto"/>
+                        <p:inputText id="txtCusto" size="10" maxlength="10"
+                                     value="#{controleServico.objeto.custo}"/>
+
+                        <p:outputLabel value="Insumos" for="txtInsumos"/>
+                        <p:inputText value="#{controleServico.objeto.insumos}"
+                                     id="txtInsumos" size="50" maxlength="50" placeholder="Obrigatório"/>
+
+                        <p:outputLabel value="Descrição" for="txtDescricao"/>
+                        <p:inputText value="#{controleServico.objeto.descricao}"
+                                     size="50" maxlength="50" id="txtDescricao" placeholder="Obrigatório"/>
+
+                        <p:outputLabel value="Horas de duração" for="txtDuracao"/>
+                        <p:inputText value="#{controleServico.objeto.duracao}"
+                                     size="10" maxlength="10" id="txtDuracao" placeholder="Obrigatório"/>
+
+                        <p:outputLabel value="Carro" for="selectCarro"/>
+                        <p:selectOneMenu value="#{controleServico.objeto.carro}"
+                                         id="selectCarro">
+                            <f:converter converterId="converterCarro"/>
+                            <f:selectItem noSelectionOption="true" itemValue="#{null}"
+                                          itemLabel="Selecione um registro"/>
+                            <f:selectItems value="#{controleServico.daoCarro.listarTodos}"
+                                           var="car" itemLabel="#{car.placa}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="Reparador" for="selectReparador"/>
+                        <p:selectOneMenu value="#{controleServico.objeto.reparador}" 
+                                         id="selectReparador">
+                            <f:converter converterId="converterReparador"/>
+                            <f:selectItem noSelectionOption="true" itemValue="#{null}"
+                                          itemLabel="Selecione um registro"/>
+                            <f:selectItems value="#{controleServico.daoReparador.listarTodosAtivos}" 
+                                           var="reparador" itemLabel="#{reparador.nome}"/>
+                        </p:selectOneMenu>                
+
+                        <f:facet name="footer">
+                            <div align="center">
+                                <p:commandButton value="Cancelar"
+                                                 action="#{controleServico.cancelar()}"
+                                                 ajax="false"
+                                                 immediate="true"/>
+                                <p:commandButton value="Salvar"
+                                                 action="#{controleServico.salvar()}"
+                                                 update=":formListagem :formEdicao"
+
+                                                 icon="ui-icon-disk"
+                                                 oncomplete="if (!args.validationFailed) {PF('dlg').hide();}"/>
+                            </div>
+                        </f:facet>
+
+                    </p:panelGrid>
+                </h:form>
+
+
+
+
+
+            </p:dialog>
+
+        </ui:define>
+    </ui:composition>
+</html>

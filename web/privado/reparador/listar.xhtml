@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"      
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/templates/template.xhtml">
+        <ui:define name="titulo">
+            Manutenção de Reparadores
+        </ui:define>
+        <ui:define name="conteudo">  
+
+
+
+            <h:form id="formListagem" prependId="false">
+                <p:growl/>
+                <p:dataTable value="#{controleReparador.dao.listarTodos}" var="obj"
+                             emptyMessage="Nenhum registro encontrado">
+
+                    <f:facet name="header">
+                        <p:commandButton value="Novo"
+                                         action="#{controleReparador.novo()}"
+                                         update=":formEdicao"
+                                         process="@form"
+                                         oncomplete="PF('dlg').show();"/>
+                        <p:outputLabel value="Manutenção de Reparadores"/>
+                    </f:facet>
+
+                    <p:column headerText="PIS">
+                        <p:outputLabel value="#{obj.pis}"/>
+                    </p:column>
+                    <p:column headerText="Nome">
+                        <p:outputLabel value="#{obj.nome}"/>
+                    </p:column>
+                    <p:column headerText="Data de Admissão">
+                        <p:outputLabel value="#{obj.dataadm}">
+                            <f:converter converterId="converterCalendar"/>
+                        </p:outputLabel>
+                    </p:column>
+                    <p:column headerText="Endereço">
+                        <p:outputLabel value="#{obj.endereco}"/>
+                    </p:column>
+                    <p:column headerText="Salário">
+                        <p:outputLabel value="#{obj.salario}"/>
+                    </p:column>
+                    <p:column headerText="Ativo?">
+                        <p:outputLabel value="#{obj.ativo}">
+                            <f:converter converterId="converterAtivo"/>
+                        </p:outputLabel>
+                    </p:column>
+                    <p:column headerText="Especialidade">
+                        <p:outputLabel value="#{obj.especialidade}"/>
+                    </p:column>
+
+                    <p:column headerText="Ações">
+                        <p:commandButton icon="ui-icon-pencil"
+                                         action="#{controleReparador.editar(obj.pis)}"
+                                         oncomplete="PF('dlg').show();"
+                                         update=":formEdicao"
+                                         process="@form"/>
+                        <p:commandButton icon="ui-icon-trash"
+                                         action="#{controleReparador.excluir(obj.pis)}"
+                                         update="@form" process="@form"
+                                         onclick="if (!confirm('Confirma a exclusão do objeto?'))
+                                                     return false"/>    
+                    </p:column>
+
+                    <f:facet name="footer">
+                        <p:outputLabel value="Total de registros: #{controleReparador.dao.listarTodos.size()}"/>
+                    </f:facet>
+
+                </p:dataTable>
+            </h:form>
+
+
+
+        </ui:define>
+        <ui:define name="dialogos">
+            <p:dialog header="Edição" widgetVar="dlg" 
+                      resizable="false" modal="true" width="800" height="600">
+
+
+
+                <h:form id="formEdicao" prependId="false">
+                    <p:growl/>
+                    <p:panelGrid columns="4">
+
+                        <f:facet name="header">
+                            <p:outputLabel value="Edição de Reparadores"/>
+                        </f:facet>
+
+                        <p:outputLabel value="PIS" for="txtpis"/>
+                        <p:inputMask id="txtpis" size="10"
+                                     mask="999999999" 
+                                     value="#{controleReparador.objeto.pis}"/>
+
+                        <p:outputLabel value="Nome" for="txtnome"/>
+                        <p:inputText id="txtnome" size="50" maxlength="50"
+                                     value="#{controleReparador.objeto.nome}"/>
+
+                        <p:outputLabel value="Data de Admissão" for="txtdata"/>
+                        <p:inputMask value="#{controleReparador.objeto.dataadm}"
+                                     mask="99/99/9999" id="txtdata">
+                            <f:converter converterId="converterCalendar"/>
+                        </p:inputMask>
+
+                        <p:outputLabel value="Endereço" for="txtEndereco"/>
+                        <p:inputText value="#{controleReparador.objeto.endereco}"
+                                     size="50" maxlength="50" id="txtEndereco" placeholder="Obrigatório"/>
+
+                        <p:outputLabel value="Salário" for="txtSalario"/>
+                        <p:inputText value="#{controleReparador.objeto.salario}"
+                                     size="10" maxlength="10"
+                                     id="txtSalario" placeholder="Obrigatório"/>
+
+                        <p:outputLabel value="Ativo?" for="btnAtivo"/>
+                        <p:selectBooleanButton value="#{controleReparador.objeto.ativo}" id="btnAtivo"
+                                               onLabel="Contratado" offLabel="Demitido" style="width: 200"/>                
+
+                        <p:outputLabel value="Especialidade" for="txtEspecialidade"/>
+                        <p:inputText value="#{controleReparador.objeto.especialidade}"
+                                     size="30" maxlength="50" placeholder="Obrigatório"
+                                     id="txtEspecialidade" />
+
+                        <f:facet name="footer">
+                            <div align="center">
+                                <p:commandButton value="Cancelar"
+                                                 action="#{controleReparador.cancelar()}"
+                                                 ajax="false"
+                                                 immediate="true"/>
+                                <p:commandButton value="Salvar"
+                                                 action="#{controleReparador.salvar()}"
+                                                 update=":formListagem :formEdicao"
+
+                                                 icon="ui-icon-disk"
+                                                 oncomplete="if (!args.validationFailed) {PF('dlg').hide();}"/>
+                            </div>
+                        </f:facet>
+
+                    </p:panelGrid>
+                </h:form>
+
+
+
+
+            </p:dialog>
+
+        </ui:define>
+    </ui:composition>
+</html>
